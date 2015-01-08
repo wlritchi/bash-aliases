@@ -1,0 +1,14 @@
+#!/bin/bash
+# This is a collection of bash aliases and short functions for ~/.bash_aliases.d/
+# It's mostly intended for me, but it's on Github in case something catastrophic happens so I don't need to redo my workflow.
+# If you spot something horribly wrong with one of my aliases, feel free to comment or submit a pull request.
+#
+# These are used with the following in ~/.bashrc:
+# [ -d ~/.bash_aliases.d ] && for f in ~/.bash_aliasse.d/*; do
+#     [ -x "$f" ] && . "$f"
+# done
+#
+# You should take the same security precautions with this directory as you do with ~/.bashrc.
+#
+# By the way, this README file shouldn't be marked executable, so it's not really necessary to make it a bash script.
+# But, just in case, it is anyway.

@@ -1,0 +1,180 @@
+alias g='git'
+alias ga='git add'
+alias gap='git add -p'
+alias gbc='git branch'
+alias gbd='git branch -d'
+alias gbdf='git branch -D'
+alias gbs='git bisect'
+alias gbss='gbs start'
+alias gchp='git cherry-pick'
+alias gcl='git clone'
+alias gclsh='git clone --depth 1'
+alias gcm='git commit'
+alias gcma='git commit -a'
+alias gcmaa='gcma --amend'
+alias gcmaad='gcma --amend -F "$(git rev-parse --show-cdup).git/COMMIT_EDITMSG"'
+alias gcn='git clean'
+alias gcnf='git clean -ffd'
+alias gd='git diff'
+alias gedl='git review -d'
+alias gepsh='git review -f'
+alias gg='git rgrep -P'
+alias gm='git merge'
+alias gmnff='gm --no-ff'
+alias gpsh='git push'
+alias gr='git reset'
+alias grcv='git fsck --no-reflog | awk '"'"'/dangling commit/ {print $3}'"'"' | while read hash ; do gshw "$hash" ; done'
+alias grh='gr --hard'
+alias grhh='gr --hard HEAD'
+alias gri='git rebase -i'
+alias grm='git rm'
+alias grs='gr --soft'
+alias grv='git revert'
+alias gs='git status'
+alias gsh='git stash -p'
+alias gsha='git stash'
+alias gshd='git stash drop'
+alias gshw='git show'
+alias gshp='git stash pop'
+alias gsmi='git submodule update --init --recursive'
+alias gsmu='git submodule update --recursive'
+alias gtree="git log --graph --oneline --all --decorate --show-signature --submodule --date-order --pretty=format:'%C(yellow)%h%Creset -%C(bold cyan)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
+alias gtreeold='git log --graph --oneline --all --decorate --show-signature --submodule --date-order'
+gbcm() {
+  gcm "${@:2}"
+  cm="$(git rev-parse HEAD)"
+  b="$(git rev-parse --abbrev-ref HEAD)"
+  if gd --quiet ; then
+    gco "$1"
+    gchp "$cm"
+    gco "$b"
+    gundo
+  else
+    gsha
+    gco "$1"
+    gchp "$cm"
+    gco "$b"
+    gundo
+    gshp
+  fi
+}
+gbcma() {
+  gbcm "$1" -a "${@:2}"
+}
+gbg() {
+  git update-ref "refs/heads/$1" HEAD
+  gco "$1"
+}
+gbplr() {
+  b="$(git rev-parse --abbrev-ref HEAD)"
+  if gd --quiet ; then
+    gco "$1"
+    gplr
+    gco "$b"
+  else
+    gsha
+    gco "$1"
+    gplr
+    gco "$b"
+    gshp
+  fi
+}
+gbsb() {
+  gbs bad
+  gsmiu
+}
+gbsg() {
+  gbs good
+  gsmiu
+}
+gbsr() {
+  gbs reset
+  gsmiu
+}
+gchg() {
+  gchp -n "$1"
+  git reset
+}
+gco() {
+  git checkout "$@"
+  gsmiu
+}
+gdcm() {
+  grv -n "$1"
+  gcma -m "Temporarily revert commit '$1'"
+  gchg "$1"
+}
+geb() {
+  git branch gerrit-dev
+  gco gerrit-dev
+}
+gecl() {
+  gcl "$@"
+  cd "$1"
+  git review -s
+  cd
+}
+gmeld() {
+  git difftool --no-prompt --tool=meld "$@" &
+}
+gmm() {
+  echo "gmm $@"
+  gm --no-commit "${@:2}"
+  gcm -m "$1"
+}
+gpl() {
+  git pull
+  gsmiu
+}
+gplr() {
+  git pull --rebase
+  gsmiu
+}
+grcm() {
+  grs HEAD~1
+  gcm
+}
+grvg() {
+  grv -n "$1"
+  grs
+}
+gsvnf() {
+  git svn fetch --use-log-author
+  git for-each-ref refs/remotes/svn/tags | cut -d / -f 5- | grep -v @ | while read tagname; do git tag -f "$tagname" "svn/tags/$tagname"; git branch -r -d "svn/tags/$tagname"; done
+  git for-each-ref refs/remotes/svn | cut -d / -f 4- | grep -v @ | while read branchname; do git branch -f "$branchname" "refs/remotes/svn/$branchname"; done
+}
+gsvnpsh() {
+  if ! branch=${1-"$(git symbolic-ref HEAD 2>/dev/null)"}; then
+    echo "Please specify a branch to push while in a detached HEAD state." >&2
+    return 1
+  fi
+  echo "Warning! This action is dangerous; you MUST fetch and merge first, or you will overwrite history!"
+  echo "Press Ctrl-C within 5 seconds to abort"
+  sleep 5 && git svn set-tree "$branch"
+}
+gsvnplr() {
+  git svn rebase --use-log-author
+}
+gsmiu() {
+  gsmi
+  gsmu
+}
+gundo() {
+  if [ "w$1" == "w" ]; then
+    grh HEAD~1
+  else
+    grh HEAD~$1
+  fi
+  gsmiu
+}
+gundog() {
+  tmp="$(git rev-parse HEAD)"
+  if [ w"$1" == "w" ]; then
+    grh HEAD~1
+  else
+    grh HEAD~$1
+  fi
+  git reset "$tmp"
+  gsmiu
+}
+

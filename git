@@ -113,12 +113,6 @@ geb() {
   git branch gerrit-dev
   gco gerrit-dev
 }
-gecl() {
-  gcl "$@"
-  cd "$1"
-  git review -s
-  cd
-}
 gmeld() {
   git difftool --no-prompt --tool=meld "$@" &
 }

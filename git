@@ -1,3 +1,7 @@
+#!/bin/bash
+# Aliases for git. Some depend on other packages being installed (git-svn and git-review).
+# Some of these are probably horribly bad ideas. But they work, and they haven't broken anything yet.
+
 alias g='git'
 alias ga='git add'
 alias gap='git add -p'

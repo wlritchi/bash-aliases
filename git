@@ -39,8 +39,8 @@ alias gs='git status'
 alias gsh='git stash -p'
 alias gsha='git stash'
 alias gshd='git stash drop'
-alias gshw='git show'
 alias gshp='git stash pop'
+alias gshw='git show'
 alias gsmi='git submodule update --init --recursive'
 alias gsmu='git submodule update --recursive'
 alias gtree="git log --graph --oneline --all --decorate --show-signature --submodule --date-order --pretty=format:'%C(yellow)%h%Creset -%C(bold cyan)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
@@ -96,9 +96,17 @@ gbsr() {
   gbs reset
   gsmiu
 }
+# Git cherry-get : cherry-pick another commit without staging or committing
+# Doesn't really do what it should, because it resets the stage
 gchg() {
   gchp -n "$1"
   git reset
+}
+# Git cherry-branch-get : cherry-pick a commit by branch name, then pull the branch pointer to the new commit
+# TODO make this use rebase like any sane person
+gchbg() { # Git cherr
+  gchp "$1"
+  gbg "$1"
 }
 gco() {
   git checkout "$@"
@@ -136,6 +144,9 @@ grcm() {
 grvg() {
   grv -n "$1"
   grs
+}
+gshm() {
+  gshp && gsha
 }
 gsvnf() {
   git svn fetch --use-log-author

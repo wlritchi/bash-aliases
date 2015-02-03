@@ -23,6 +23,7 @@ alias gd='git diff'
 alias gedl='git review -d'
 alias gepsh='git review -R'
 alias gepshf='git review -Rf'
+alias gfh='git reset --soft' # Git force head
 alias gg='git rgrep -P'
 alias gm='git merge'
 alias gmnff='gm --no-ff'

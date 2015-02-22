@@ -1,0 +1,28 @@
+#!/bin/bash
+# Git Vanity Recommit - specify a prefix for a git commit object; the timestamps on the most recent
+# commit will be fuzzed until a commit with the desired prefix is found.
+# TBI - if there's no change ID present but gerrit is in use, generate one and fuzz with it instead
+git-vanity-recommit() {
+  prefix=$1
+  timestamp=$(date +%s)
+  offset=$(date +%z)
+  tree=$(git write-tree)
+  parentString="$(git rev-list --parents HEAD -n 1 | cut -d' ' -f2- | sed -re 's/^| / -p /g')"
+  message="$(git log --format=%B -n 1 HEAD)"
+  gitobjdir="$(git rev-parse --show-toplevel)/.git/objects/"
+  commitOffset=0
+  while [ $commitOffset -lt 3600 ]; do
+    authorOffset=0
+    while [ $authorOffset -le $commitOffset ]; do
+      commit=$(GIT_AUTHOR_DATE=$(( $timestamp + $authorOffset )) GIT_COMMITTER_DATE=$(( $timestamp + $commitOffset )) git commit-tree $parentString -m "$message" $tree)
+      if [[ $commit == $prefix* ]]; then
+        git checkout $commit
+        return
+      else
+        rm -f "$gitobjdir${commit:0:2}/${commit:2}"
+      fi
+      (( ++authorOffset ))
+    done
+    (( ++commitOffset ))
+  done
+}

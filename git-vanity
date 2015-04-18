@@ -7,7 +7,7 @@ git-vanity-recommit() {
   timestamp=$(date +%s)
   offset=$(date +%z)
   tree=$(git write-tree)
-  parentString="$(git rev-list --parents HEAD -n 1 | cut -d' ' -f2- | sed -re 's/^| / -p /g')"
+  parentString="$(git rev-list --parents HEAD -n 1 | sed -re 's/^[^ ]+//;s/ / -p /g')"
   message="$(git log --format=%B -n 1 HEAD)"
   gitobjdir="$(git rev-parse --show-toplevel)/.git/objects/"
   commitOffset=0

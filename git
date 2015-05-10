@@ -105,7 +105,7 @@ gchg() {
 }
 # Git cherry-branch-get : cherry-pick a commit by branch name, then pull the branch pointer to the new commit
 # TODO make this use rebase like any sane person
-gchbg() { # Git cherr
+gchbg() {
   gchp "$1"
   gbg "$1"
 }

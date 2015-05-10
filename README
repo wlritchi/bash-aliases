@@ -4,7 +4,7 @@
 # If you spot something horribly wrong with one of my aliases, feel free to comment or submit a pull request.
 #
 # These are used with the following in ~/.bashrc:
-# [ -d ~/.bash_aliases.d ] && for f in ~/.bash_aliasse.d/*; do
+# [ -d ~/.bash_aliases.d ] && for f in ~/.bash_aliases.d/*; do
 #     [ -x "$f" ] && . "$f"
 # done
 #
